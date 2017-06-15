@@ -90,8 +90,14 @@ function(container, model, s=0.01, ...) {
 							   
 	if (pmatch("maxent",class(model),nomatch=0) > 0) {
 		maxent_results <- predict(model,container@classification_matrix,...)
-		maxent_pred <- maxent_results[,1]
-		maxent_prob <- apply(maxent_results[,-1],1,extract_maximum_prob)
+		if (nrow(maxent_results) > 1) {
+			maxent_pred <- maxent_results[, 1]
+			maxent_prob <- apply(maxent_results[, -1], 1, extract_maximum_prob)
+		}
+		else {
+      			maxent_pred <- maxent_results[1]
+      			maxent_prob <- extract_maximum_prob(maxent_results[-1])
+		}
 		
 		results_table <- data.frame(as.character(maxent_pred),as.vector(maxent_prob,mode="numeric"))
 		colnames(results_table)[1] <- "MAXENTROPY_LABEL"
